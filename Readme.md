@@ -1,0 +1,1 @@
+# FastAPI project for managing products and categories.
