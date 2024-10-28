@@ -5,6 +5,9 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from Task3_Products import models, schemas
+from logger import setup_logger
+
+logger = setup_logger("Shop", "shop.log")
 
 
 def create_category(category_data: schemas.CategoryCreate, db: Session) -> models.Category:
@@ -21,6 +24,7 @@ def create_category(category_data: schemas.CategoryCreate, db: Session) -> model
     db.add(category)
     db.commit()
     db.refresh(category)
+    logger.info(f"Category '{category.name}' created")
     return category
 
 
@@ -71,6 +75,7 @@ def update_category(category_id: int, category_data: schemas.CategoryUpdate, db:
 
     db.commit()
     db.refresh(category)
+    logger.info(f"Category '{category.name}' updated")
     return category
 
 
@@ -79,6 +84,7 @@ def delete_category(category_id: int, db: Session) -> None:
 
     db.delete(category)
     db.commit()
+    logger.info(f"Category '{category.name}' deleted")
     return None
 
 
@@ -100,6 +106,7 @@ def create_product(product_data: schemas.ProductCreate, db: Session) -> models.P
     db.add(product)
     db.commit()
     db.refresh(product)
+    logger.info(f"Product '{product.name}' created")
     return product
 
 def get_products(
@@ -165,6 +172,7 @@ def update_product(product_id: int, product_data: schemas.ProductUpdate, db: Ses
 
     db.commit()
     db.refresh(product)
+    logger.info(f"Product '{product.name}' updated")
     return product
 
 
@@ -172,4 +180,5 @@ def delete_product(product_id: int, db: Session) -> None:
     product = get_product_by_id(db=db, product_id=product_id)
     db.delete(product)
     db.commit()
+    logger.info(f"Product '{product.name}' deleted")
     return None
