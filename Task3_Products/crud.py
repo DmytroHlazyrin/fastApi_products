@@ -1,6 +1,6 @@
 from typing import Optional, Literal
 
-from sqlalchemy import select, asc, desc
+from sqlalchemy import asc, desc
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
@@ -78,5 +78,98 @@ def delete_category(category_id: int, db: Session) -> None:
     category = get_category_by_id(db=db, category_id=category_id)
 
     db.delete(category)
+    db.commit()
+    return None
+
+
+def create_product(product_data: schemas.ProductCreate, db: Session) -> models.Product:
+    get_category_by_id(category_id=product_data.category_id, db=db)
+
+    product_already_exist = db.query(models.Product).filter(models.Product.name == product_data.name).first()
+    if product_already_exist:
+        raise HTTPException(status_code=400, detail="Product already exists")
+
+
+    product = models.Product(
+        name=product_data.name,
+        description=product_data.description,
+        price=product_data.price,
+        quantity=product_data.quantity,
+        category_id=product_data.category_id
+    )
+    db.add(product)
+    db.commit()
+    db.refresh(product)
+    return product
+
+def get_products(
+        db: Session,
+        skip: int = 0,
+        limit: int = 10,
+        sort_by: Literal["id", "name", "price"] = None,
+        sort_order: Literal["asc", "desc"] = None,
+        category_id: Optional[int] = None,
+) -> list[models.Product]:
+
+
+
+    query = db.query(models.Product)
+
+    if category_id:
+        get_category_by_id(category_id=category_id, db=db)
+        query = query.filter(models.Product.category_id == category_id)
+
+    if sort_by:
+        if sort_by == "id":
+            order = asc(models.Product.id) if sort_order == "asc" else desc(
+                models.Product.id)
+        elif sort_by == "name":
+            order = asc(
+                models.Product.name) if sort_order == "asc" else desc(
+                models.Product.name)
+        elif sort_by == "price":
+            order = asc(
+                models.Product.price) if sort_order == "asc" else desc(
+                models.Product.price)
+        else:
+            raise HTTPException(status_code=400,
+                                detail="Invalid sort_by field")
+
+        query = query.order_by(order)
+
+    query = query.offset(skip).limit(limit)
+    return query.all()
+
+
+def get_product_by_id(product_id: int, db: Session) -> Optional[models.Product]:
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    return product
+
+
+def update_product(product_id: int, product_data: schemas.ProductUpdate, db: Session) -> models.Product:
+    product = get_product_by_id(product_id=product_id, db=db)
+
+    if product_data.name:
+        product.name = product_data.name
+    if product_data.description:
+        product.description = product_data.description
+    if product_data.price:
+        product.price = product_data.price
+    if product_data.quantity:
+        product.quantity = product_data.quantity
+    if product_data.category_id:
+        get_category_by_id(category_id=product_data.category_id, db=db)
+        product.category_id = product_data.category_id
+
+    db.commit()
+    db.refresh(product)
+    return product
+
+
+def delete_product(product_id: int, db: Session) -> None:
+    product = get_product_by_id(db=db, product_id=product_id)
+    db.delete(product)
     db.commit()
     return None

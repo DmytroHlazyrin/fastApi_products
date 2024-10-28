@@ -1,6 +1,6 @@
 from typing import Literal, Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from Task3_Products import crud, models, schemas
@@ -40,7 +40,7 @@ async def read_category(
     return get_category_by_id(category_id=category_id, db=db)
 
 
-@router.put("/categories/{category_id}", response_model=schemas.Category)
+@router.patch("/categories/{category_id}", response_model=schemas.Category)
 async def update_category(
     category_id: int,
     category_data: schemas.CategoryUpdate,
