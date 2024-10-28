@@ -16,9 +16,12 @@ def create_category(category_data: schemas.CategoryCreate, db: Session) -> model
         raise HTTPException(status_code=400, detail="Category already exists")
 
     if category_data.parent_id:
-        parent_category = db.query(models.Category).filter_by(id=category_data.parent_id).first()
+        parent_category = db.query(models.Category).filter(
+            models.Category.id == category_data.parent_id).first()
         if not parent_category:
             raise HTTPException(status_code=404, detail="Parent category not found")
+    else:
+        category_data.parent_id = None
 
     category = models.Category(name=category_data.name, parent_id=category_data.parent_id)
     db.add(category)

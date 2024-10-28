@@ -1,9 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DECIMAL, \
-    CheckConstraint, DateTime, Enum
+    CheckConstraint, DateTime
 from sqlalchemy.orm import relationship, declarative_base
 from sqlalchemy.sql import func
-
-import enum
 
 Base = declarative_base()
 
