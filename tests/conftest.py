@@ -7,12 +7,19 @@ from Task3_Products import models
 from Task3_Products.database import get_db
 from Task3_Products.main import app
 from Task3_Products.models import Base
-
+from logger import setup_logger
 
 SQLALCHEMY_TEST_DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(SQLALCHEMY_TEST_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+@pytest.fixture(autouse=True)
+def disable_logging():
+    logger = setup_logger("Shop", "shop.log")
+    logger.disabled = True
+    yield
+    logger.disabled = False
 
 
 @pytest.fixture(scope="session", autouse=True)

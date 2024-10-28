@@ -9,14 +9,18 @@ from Task3_Products.database import get_db
 
 router = APIRouter()
 
-@router.post("/products/", response_model=schemas.Product, status_code=201)
+
+@router.post(
+    "/products/",
+    response_model=schemas.Product,
+    status_code=201
+)
 async def create_product_endpoint(
     product_data: schemas.ProductCreate,
     db: Session = Depends(get_db)
 ) -> models.Product:
     """Create a new product."""
     return crud.create_product(product_data=product_data, db=db)
-
 
 
 @router.get("/products/", response_model=list[schemas.Product])
@@ -29,7 +33,14 @@ def read_products_endpoint(
     db: Session = Depends(get_db)
 ) -> list[models.Product]:
     """Read products."""
-    return crud.get_products(db=db, skip=skip, limit=limit, sort_by=sort_by, sort_order=sort_order, category_id=category_id)
+    return crud.get_products(
+        db=db,
+        skip=skip,
+        limit=limit,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        category_id=category_id
+    )
 
 
 @router.get("/products/{product_id}", response_model=schemas.Product)
@@ -48,7 +59,11 @@ async def update_product_endpoint(
     db: Session = Depends(get_db)
 ) -> models.Product:
     """Update a single product."""
-    return crud.update_product(product_id=product_id, product_data=product_data, db=db)
+    return crud.update_product(
+        product_id=product_id,
+        product_data=product_data,
+        db=db
+    )
 
 
 @router.delete("/products/{product_id}", status_code=204)
