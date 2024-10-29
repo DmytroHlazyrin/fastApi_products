@@ -40,10 +40,10 @@ def create_category(
 
 def get_categories(
         db: Session,
+        sort_by: Literal["id", "name"] = "id",
+        sort_order: Literal["asc", "desc"] = "asc",
         skip: int = 0,
         limit: int = 10,
-        sort_by: Literal["id", "name"] = None,
-        sort_order: Literal["asc", "desc"] = None,
 ) -> list[models.Category]:
 
     query = db.query(models.Category)
@@ -69,7 +69,7 @@ def get_categories(
 def get_category_by_id(
         category_id: int,
         db: Session
-) -> Optional[models.Category]:
+) -> models.Category:
 
     category = db.query(models.Category).filter(
         models.Category.id == category_id).first()
@@ -140,11 +140,11 @@ def create_product(
 
 def get_products(
         db: Session,
+        category_id: Optional[int] | None,
+        sort_by: Literal["id", "name", "price"] = "id",
+        sort_order: Literal["asc", "desc"] = "asc",
         skip: int = 0,
         limit: int = 10,
-        sort_by: Literal["id", "name", "price"] = None,
-        sort_order: Literal["asc", "desc"] = None,
-        category_id: Optional[int] = None,
 ) -> list[models.Product]:
 
     query = db.query(models.Product)
@@ -178,7 +178,7 @@ def get_products(
 def get_product_by_id(
         product_id: int,
         db: Session
-) -> Optional[models.Product]:
+) -> models.Product:
 
     product = db.query(models.Product).filter(
         models.Product.id == product_id).first()

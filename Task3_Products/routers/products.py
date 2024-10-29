@@ -3,8 +3,7 @@ from typing import Literal, Optional
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from Task3_Products import crud, models, schemas
-from Task3_Products.database import get_db
+from Task3_Products import crud, schemas, database
 
 
 router = APIRouter()
@@ -17,21 +16,21 @@ router = APIRouter()
 )
 async def create_product_endpoint(
     product_data: schemas.ProductCreate,
-    db: Session = Depends(get_db)
-) -> models.Product:
+    db: Session = Depends(database.get_db)
+) -> schemas.Product:
     """Create a new product."""
     return crud.create_product(product_data=product_data, db=db)
 
 
 @router.get("/products/", response_model=list[schemas.Product])
 def read_products_endpoint(
+    category_id: Optional[int] = None,
     skip: Optional[int] = 0,
     limit: Optional[int] = 10,
-    sort_by: Literal["id", "name", "price"] = None,
-    sort_order: Literal["asc", "desc"] = None,
-    category_id: Optional[int] = None,
-    db: Session = Depends(get_db)
-) -> list[models.Product]:
+    sort_by: Literal["id", "name", "price"] = "id",
+    sort_order: Literal["asc", "desc"] = "asc",
+    db: Session = Depends(database.get_db)
+) -> list[schemas.Product]:
     """Read products."""
     return crud.get_products(
         db=db,
@@ -46,8 +45,8 @@ def read_products_endpoint(
 @router.get("/products/{product_id}", response_model=schemas.Product)
 def read_product_endpoint(
         product_id: int,
-        db: Session = Depends(get_db)
-) -> models.Product:
+        db: Session = Depends(database.get_db)
+) -> schemas.Product:
     """Retrieve a single product."""
     return crud.get_product_by_id(product_id=product_id, db=db)
 
@@ -56,8 +55,8 @@ def read_product_endpoint(
 async def update_product_endpoint(
     product_id: int,
     product_data: schemas.ProductUpdate,
-    db: Session = Depends(get_db)
-) -> models.Product:
+    db: Session = Depends(database.get_db)
+) -> schemas.Product:
     """Update a single product."""
     return crud.update_product(
         product_id=product_id,
@@ -69,7 +68,7 @@ async def update_product_endpoint(
 @router.delete("/products/{product_id}", status_code=204)
 async def delete_product_endpoint(
     product_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(database.get_db)
 ) -> None:
     """Delete a single product."""
     return crud.delete_product(product_id=product_id, db=db)

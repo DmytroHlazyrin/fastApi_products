@@ -1,9 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
-from Task3_Products.config import DATABASE_URL
+from Task3_Products.config import settings
 
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(settings.DATABASE_URL, echo=True)
 session_maker = sessionmaker(
     bind=engine, class_=Session, expire_on_commit=False
 )
