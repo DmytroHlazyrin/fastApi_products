@@ -10,7 +10,7 @@ from Task3_Products.config import settings
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
-# config.set_main_option("sqlalchemy.url", settings.database_url)
+config.set_main_option("DATABASE_URL", settings.DATABASE_URL)
 config.set_main_option("DB_USER", settings.DB_USER)
 config.set_main_option("DB_PASS", settings.DB_PASS)
 config.set_main_option("DB_HOST", settings.DB_HOST)
