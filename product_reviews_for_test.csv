@@ -1,0 +1,6 @@
+review_id,product_name,review_text,rating
+1,Widget A,"Great product, really useful and high quality!",5
+2,Widget B,Not what I expected. Poor performance.,2
+3,Widget A,,4
+4,Widget C,Amazing features and easy to use!,5
+5,Widget B,"Quite satisfactory, though there are minor flaws.",3
